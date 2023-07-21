@@ -17,7 +17,7 @@ int cwPin = A1;
 int ccwPin = A2;
 int DOUT = A3;
 const int rev = 800;
-
+int count = 1;
 
 bool boo;
 
@@ -49,11 +49,14 @@ void loop() {
     boo = false;
   }
   //Serial.println(boo);
-  if (boo) {
-    motor.moveTo(rev);
+  if ((boo) && (count <= 5)) {
+    int currentRev = rev * count;
+    motor.moveTo(currentRev);
     motor.runToPosition();
-    delay(1000);
+    count = count + 1;
+  } else if ((boo) && (count > 5)) {
     motor.moveTo(0);
     motor.runToPosition();
+    count = 1;
   }
 }
