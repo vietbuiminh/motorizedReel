@@ -17,12 +17,13 @@ int cwPin = A1;
 int ccwPin = A2;
 int DOUT = A3;
 const int rev = 800;
-int count = 1;
+int count = 0;
 
 bool boo = false;       // for XLink
 bool booManual = false; // for manual control 
 
 void setup() {
+  Serial.begin(9600);
   motor.setMaxSpeed(500);
   motor.setAcceleration(300);
 }
@@ -32,13 +33,6 @@ void loop() {
   int ccw = analogRead(ccwPin);
   int xLink = analogRead(DOUT); 
   int val = analogRead(analogPin);
-  
-  if (cw > 700) { // >700 because max voltage is 3V
-    digitalWrite(dirPin, HIGH);
-  }
-  if (ccw > 700) {
-    digitalWrite(dirPin, LOW);
-  }
   
   // XLink send a 1s 5V from the DOUT port to the analog port. 
   if (xLink > 1000) { // >1000 for 5V signal
@@ -52,27 +46,43 @@ void loop() {
     boo = false;
     count = 0;
     booManual = true;
-    motor.setCurrentPosition(0);
-    motor.moveTo(0);
-    motor.runToPosition();
   } else {
     booManual = false;
   }
   if (booManual) {
-    digitalWrite(stepPin, HIGH);
-    delayMicroseconds(1000);
-    digitalWrite(stepPin, LOW);
-    delayMicroseconds(1000);
+    int nextPosition = motor.currentPosition();
+    motor.setAcceleration(100000000);
+    if (cw > 700) { // >700 because max voltage is 3V
+      motor.moveTo(nextPosition + 100);
+      motor.runToPosition();
+    }
+    if (ccw > 700) {
+      motor.moveTo(nextPosition - 100);
+      motor.runToPosition();
+    }
+    // Save new position as position 0
+    motor.setCurrentPosition(0);
+    motor.moveTo(0);
+    motor.runToPosition();
+    printCountPosition(count, motor);
   } else {
-    if ((boo) && (count <= 3)) {
-      int currentRev = rev * count;
+    motor.setAcceleration(300);
+    
+    printCountPosition(count, motor);
+    if ((boo) && (count < 3)) {
+      int currentRev = rev * (count + 1);
       motor.moveTo(currentRev);
       motor.runToPosition();
       count = count + 1;
-    } else if ((boo) && (count > 3)) {
+    } else if ((boo) && (count >= 3)) {
       motor.moveTo(0);
       motor.runToPosition();
-      count = 1;
+      count = 0;
     }
   }
 }
+void printCountPosition(int count, AccelStepper motor) {
+    Serial.print(count);
+    Serial.print(" currentPos: ");
+    Serial.println(motor.currentPosition());
+  }
