@@ -16,7 +16,7 @@ int analogPin = A0;
 int cwPin = A1;
 int ccwPin = A2;
 int DOUT = A3;
-const int rev = 800*2;
+const int rev = 800;
 int count = 1;
 
 bool boo = false;       // for XLink
@@ -50,7 +50,11 @@ void loop() {
   // Manual button engage overwrite the xLink boolean value
   if (val > 1000) {
     boo = false;
+    count = 0;
     booManual = true;
+    motor.setCurrentPosition(0);
+    motor.moveTo(0);
+    motor.runToPosition();
   } else {
     booManual = false;
   }
@@ -60,12 +64,12 @@ void loop() {
     digitalWrite(stepPin, LOW);
     delayMicroseconds(1000);
   } else {
-    if ((boo) && (count <= 5)) {
+    if ((boo) && (count <= 3)) {
       int currentRev = rev * count;
       motor.moveTo(currentRev);
       motor.runToPosition();
       count = count + 1;
-    } else if ((boo) && (count > 5)) {
+    } else if ((boo) && (count > 3)) {
       motor.moveTo(0);
       motor.runToPosition();
       count = 1;
