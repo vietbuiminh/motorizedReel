@@ -61,14 +61,12 @@ void loop() {
       motor.runToPosition();
     }
     // Save new position as position 0
-    motor.setCurrentPosition(0);
-    motor.moveTo(0);
-    motor.runToPosition();
-    printCountPosition(count, motor);
+    setOriginPosition();
+    printCountPosition(count);
   } else {
     motor.setAcceleration(300);
     
-    printCountPosition(count, motor);
+    printCountPosition(count);
     if ((boo) && (count < 3)) {
       int currentRev = rev * (count + 1);
       motor.moveTo(currentRev);
@@ -81,8 +79,13 @@ void loop() {
     }
   }
 }
-void printCountPosition(int count, AccelStepper motor) {
+void setOriginPosition() {
+    motor.setCurrentPosition(0);
+    motor.moveTo(0);
+    motor.runToPosition();
+}
+void printCountPosition(int count) {
     Serial.print(count);
     Serial.print(" currentPos: ");
     Serial.println(motor.currentPosition());
-  }
+}
