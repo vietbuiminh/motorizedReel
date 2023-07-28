@@ -17,6 +17,7 @@ int cwPin = A1;
 int ccwPin = A2;
 int DOUT = A3;
 const int rev = 800;
+const int DISTANCE_MOVE = 300;
 int count = 0;
 
 bool boo = false;       // for XLink
@@ -53,11 +54,11 @@ void loop() {
     int nextPosition = motor.currentPosition();
     motor.setAcceleration(100000000);
     if (cw > 700) { // >700 because max voltage is 3V
-      motor.moveTo(nextPosition + 100);
+      motor.moveTo(nextPosition + DISTANCE_MOVE);
       motor.runToPosition();
     }
     if (ccw > 700) {
-      motor.moveTo(nextPosition - 100);
+      motor.moveTo(nextPosition - DISTANCE_MOVE);
       motor.runToPosition();
     }
     // Save new position as position 0
