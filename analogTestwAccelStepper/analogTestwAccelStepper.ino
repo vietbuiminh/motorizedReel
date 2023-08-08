@@ -16,7 +16,7 @@ int analogPin = A0;
 int cwPin = A1;
 int ccwPin = A2;
 int DOUT = A3;
-const int rev = 800;
+const int rev = 400;
 const int DISTANCE_MOVE = 300;
 int count = 0;
 
@@ -25,8 +25,8 @@ bool booManual = false; // for manual control
 
 void setup() {
   Serial.begin(9600);
-  motor.setMaxSpeed(500);
-  motor.setAcceleration(300);
+  motor.setMaxSpeed(300);
+  motor.setAcceleration(100);
 }
 
 void loop() {
@@ -65,7 +65,7 @@ void loop() {
     setOriginPosition();
     printCountPosition(count);
   } else {
-    motor.setAcceleration(300);
+    motor.setAcceleration(100);
     
     printCountPosition(count);
     if ((boo) && (count < 3)) {
