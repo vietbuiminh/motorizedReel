@@ -16,8 +16,9 @@ int analogPin = A0;
 int cwPin = A1;
 int ccwPin = A2;
 int DOUT = A3;
-const int rev = 400;
-const int DISTANCE_MOVE = 300;
+const int rev = -400;
+const int DISTANCE_MOVE = -300;
+const int LIMIT = 1;
 int count = 0;
 
 bool boo = false;       // for XLink
@@ -25,7 +26,7 @@ bool booManual = false; // for manual control
 
 void setup() {
   Serial.begin(9600);
-  motor.setMaxSpeed(300);
+  motor.setMaxSpeed(100);
   motor.setAcceleration(100);
 }
 
@@ -38,6 +39,7 @@ void loop() {
   // XLink send a 1s 5V from the DOUT port to the analog port. 
   if (xLink > 1000) { // >1000 for 5V signal
     boo = true;
+    
   } else {
     boo = false;
   }
@@ -68,12 +70,12 @@ void loop() {
     motor.setAcceleration(100);
     
     printCountPosition(count);
-    if ((boo) && (count < 3)) {
+    if ((boo) && (count < LIMIT)) {
       int currentRev = rev * (count + 1);
       motor.moveTo(currentRev);
       motor.runToPosition();
       count = count + 1;
-    } else if ((boo) && (count >= 3)) {
+    } else if ((boo) && (count >= LIMIT)) {
       motor.moveTo(0);
       motor.runToPosition();
       count = 0;
