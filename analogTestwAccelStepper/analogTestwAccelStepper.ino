@@ -51,14 +51,14 @@ void loop() {
     count = 0;
   }
 }
-
-void setOriginPosition() {
-    motor.setCurrentPosition(0);
-    motor.moveTo(0);
-    motor.runToPosition();
-}
-void printCountPosition(int count) {
-    Serial.print(count);
-    Serial.print(" currentPos: ");
-    Serial.println(motor.currentPosition());
-}
+//
+//void setOriginPosition() {
+//    motor.setCurrentPosition(0);
+//    motor.moveTo(0);
+//    motor.runToPosition();
+//}
+//void printCountPosition(int count) {
+//    Serial.print(count);
+//    Serial.print(" currentPos: ");
+//    Serial.println(motor.currentPosition());
+//}
