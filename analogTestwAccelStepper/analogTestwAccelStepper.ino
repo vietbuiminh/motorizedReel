@@ -24,12 +24,15 @@ void setup() {
   Serial.begin(9600);
   motor.setMaxSpeed(100);
   motor.setAcceleration(100);
+  pinMode(12, OUTPUT);
 }
 
 void loop() {
   if (firstRun) {
+    digitalWrite(12, HIGH);
     firstRun = false;
     delay(10000); // wait for 10s for first start/reset Arduino
+    digitalWrite(12, LOW);
   }
   int xLink = analogRead(DOUT); 
   
@@ -41,14 +44,18 @@ void loop() {
     boo = false;
   }
   if ((boo) && (count < LIMIT)) {
+    digitalWrite(12, HIGH);
     int currentRev = rev * (count + 1);
     motor.moveTo(currentRev);
     motor.runToPosition();
     count = count + 1;
+    digitalWrite(12, LOW);
   } else if ((boo) && (count >= LIMIT)) {
+    digitalWrite(12, HIGH);
     motor.moveTo(0);
     motor.runToPosition();
     count = 0;
+    digitalWrite(12, LOW);
   }
 }
 //
