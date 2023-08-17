@@ -12,17 +12,13 @@
 
 AccelStepper motor = AccelStepper(interfaceType, stepPin, dirPin);
 
-int analogPin = A0;
-int cwPin = A1;
-int ccwPin = A2;
 int DOUT = A3;
 const int rev = -400;
-const int DISTANCE_MOVE = -300;
 const int LIMIT = 1;
 int count = 0;
 
 bool boo = false;       // for XLink
-bool booManual = false; // for manual control 
+bool firstRun = true;
 
 void setup() {
   Serial.begin(9600);
@@ -31,10 +27,11 @@ void setup() {
 }
 
 void loop() {
-  int cw = analogRead(cwPin);
-  int ccw = analogRead(ccwPin);
+  if (firstRun) {
+    firstRun = false;
+    delay(10000); // wait for 10s for first start/reset Arduino
+  }
   int xLink = analogRead(DOUT); 
-  int val = analogRead(analogPin);
   
   // XLink send a 1s 5V from the DOUT port to the analog port. 
   if (xLink > 1000) { // >1000 for 5V signal
@@ -43,45 +40,18 @@ void loop() {
   } else {
     boo = false;
   }
-
-  // Manual button engage overwrite the xLink boolean value
-  if (val > 1000) {
-    boo = false;
+  if ((boo) && (count < LIMIT)) {
+    int currentRev = rev * (count + 1);
+    motor.moveTo(currentRev);
+    motor.runToPosition();
+    count = count + 1;
+  } else if ((boo) && (count >= LIMIT)) {
+    motor.moveTo(0);
+    motor.runToPosition();
     count = 0;
-    booManual = true;
-  } else {
-    booManual = false;
-  }
-  if (booManual) {
-    int nextPosition = motor.currentPosition();
-    motor.setAcceleration(100000000);
-    if (cw > 700) { // >700 because max voltage is 3V
-      motor.moveTo(nextPosition + DISTANCE_MOVE);
-      motor.runToPosition();
-    }
-    if (ccw > 700) {
-      motor.moveTo(nextPosition - DISTANCE_MOVE);
-      motor.runToPosition();
-    }
-    // Save new position as position 0
-    setOriginPosition();
-    printCountPosition(count);
-  } else {
-    motor.setAcceleration(100);
-    
-    printCountPosition(count);
-    if ((boo) && (count < LIMIT)) {
-      int currentRev = rev * (count + 1);
-      motor.moveTo(currentRev);
-      motor.runToPosition();
-      count = count + 1;
-    } else if ((boo) && (count >= LIMIT)) {
-      motor.moveTo(0);
-      motor.runToPosition();
-      count = 0;
-    }
   }
 }
+
 void setOriginPosition() {
     motor.setCurrentPosition(0);
     motor.moveTo(0);
