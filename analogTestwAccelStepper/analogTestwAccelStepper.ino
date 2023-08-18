@@ -13,7 +13,7 @@
 AccelStepper motor = AccelStepper(interfaceType, stepPin, dirPin);
 
 int DOUT = A3;
-int button = A1;
+int button = A1; // read voltage either 5V or 3V
 const int rev = 400;
 const int numRev = 6; // drop the probe fully to the bottom and count how many revolution needed to get it back to the original position
 const int LIMIT = 1;
