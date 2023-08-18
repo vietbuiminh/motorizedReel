@@ -36,7 +36,7 @@ void loop() {
     delay(10000); // wait for 10s for first start/reset Arduino
     
     // after power went out it should go back up
-    if (analogRead(button) < 1000) {
+    if (analogRead(button) <= 1000) {
       motor.moveTo(rev * numRev);
       motor.runToPosition();
       setOriginPosition();
